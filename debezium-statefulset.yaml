@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: debezium
+  namespace: debezium-objects
+  labels:
+    name: debezium
+spec:
+  replicas: 1
+  serviceName: debezium
+  selector:
+    matchLabels:
+      name: debezium
+  template:
+    metadata:
+      labels:
+        name: debezium
+        version: v1
+    spec:
+      serviceAccountName: compute-engine-default
+      containers:
+      - name: debezium
+        image: us-central1-docker.pkg.dev/bionic-axon-448509-r2/docker-gallery/debezium-image:dockerfile
+        securityContext:
+          runAsUser: 185
+          runAsGroup: 0
+        volumeMounts:
+        - name: debezium-config-volume
+          mountPath: /debezium/conf
+        - name: debezium-data-volume
+          mountPath: /debezium/data
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      volumes:
+      - name: debezium-config-volume
+        configMap:
+          name: debezium
+  volumeClaimTemplates:
+  - metadata:
+      name: debezium-data-volume
+    spec:
+      storageClassName: standard
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi

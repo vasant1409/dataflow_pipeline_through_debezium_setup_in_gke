@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: debezium
+  labels:
+    app: debezium
+  namespace: debezium-objects
+data:
+  application.properties: |-
+      debezium.sink.type=pubsub
+      debezium.sink.pubsub.project.id=bionic-axon-448509-r2
+      debezium.sink.pubsub.ordering.enabled=true
+      debezium.source.connector.class=io.debezium.connector.postgresql.PostgresConnector
+      debezium.source.offset.storage.file.filename=data/offsets.dat
+      debezium.source.offset.flush.interval.ms=0
+      debezium.source.database.hostname=34.172.216.150
+      debezium.source.database.port=5432
+      debezium.source.database.user=postgres
+      debezium.source.database.password=1409
+      debezium.source.database.dbname=postgres
+      debezium.source.database.server.name=debezium-db
+      debezium.source.table.include.list=public.employees
+      debezium.source.plugin.name=pgoutput
+      debezium.source.topic.prefix=debezium-postgres
+      debezium.source.slot.name=deb_rep_slot
+      debezium.source.publication.name=deb_pub_slot
+      quarkus.log.console.json=false
+      quarkus.log.file.enable=false
+      quarkus.log.level=DEBUG
